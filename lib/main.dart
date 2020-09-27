@@ -54,7 +54,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // Get a specific camera from the list of available cameras.
       widget.camera,
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.high,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -97,6 +97,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             // Ensure that the camera is initialized.
             await _initializeControllerFuture;
 
+            final Directory appDirectory = await getApplicationDocumentsDirectory();
+            final String pictureDirectory = '${appDirectory.path}/Pictures';
+            await Directory(pictureDirectory).create(recursive: true);
+
+            final String filepath = '$pictureDirectory/${DateTime.now()}.png';
+
+            /*
             // Construct the path where the image should be saved using the
             // pattern package.
             final path = join(
@@ -104,16 +111,16 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               // Find the temp directory using the `path_provider` plugin.
               (await getTemporaryDirectory()).path,
               '${DateTime.now()}.png',
-            );
+            );*/
 
             // Attempt to take a picture and log where it's been saved.
-            await _controller.takePicture(path);
+            await _controller.takePicture(filepath);
 
             // If the picture was taken, display it on a new screen.
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
+                builder: (context) => DisplayPictureScreen(imagePath: filepath),
               ),
             );
           } catch (e) {
